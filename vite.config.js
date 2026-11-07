@@ -9,9 +9,8 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
-                }),
+                bunny('Geist', { weights: [400, 500, 600, 700, 800, 900] }),
+                bunny('Noto Sans Thai', { weights: [400, 500, 600, 700] }),
             ],
         }),
         tailwindcss(),

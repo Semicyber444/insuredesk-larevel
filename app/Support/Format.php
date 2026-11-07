@@ -64,4 +64,22 @@ class Format
     {
         return self::ROLE_BADGES[$role] ?? self::ROLE_BADGES['viewer'];
     }
+
+    /** Like toLocaleDateString('th-TH'): 7/11/2569, in the Buddhist calendar. */
+    public static function thaiDate(mixed $date, string $pattern = 'd/M/yyyy'): string
+    {
+        if (! $date) {
+            return '-';
+        }
+        $formatter = new \IntlDateFormatter('th_TH@calendar=buddhist', \IntlDateFormatter::NONE, \IntlDateFormatter::NONE,
+            config('app.timezone'), \IntlDateFormatter::TRADITIONAL, $pattern);
+
+        return $formatter->format(\Illuminate\Support\Carbon::parse($date));
+    }
+
+    /** Like toLocaleString('th-TH'): date and time. */
+    public static function thaiDateTime(mixed $date): string
+    {
+        return self::thaiDate($date, 'd/M/yyyy HH:mm:ss');
+    }
 }
