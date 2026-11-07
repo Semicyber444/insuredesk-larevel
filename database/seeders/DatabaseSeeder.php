@@ -2,24 +2,25 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
+    /** Coverage types are reference data every environment needs; the demo data is for development only. */
     public function run(): void
     {
-        // User::factory(10)->create();
+        if (DB::table('coverage_types')->doesntExist()) {
+            DB::unprepared(file_get_contents(__DIR__.'/sql/coverage_types.sql'));
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        if (app()->isProduction()) {
+            return;
+        }
+        if (DB::table('plans')->exists()) {
+            throw new RuntimeException('Refusing to load demo data: plans already contains data');
+        }
+        DB::unprepared(file_get_contents(__DIR__.'/sql/demo.sql'));
     }
 }
