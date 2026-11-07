@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Component updates re-run this too, so a deactivated user's open page stops working at once.
+        Livewire::addPersistentMiddleware([\App\Http\Middleware\EnsureActiveUser::class]);
+
         // Every permission in config/insuredesk.php becomes a gate: @can('canReview'), ->can('canReview').
         $permissions = config('insuredesk.permissions');
         foreach (array_unique(array_merge(...array_values($permissions))) as $permission) {
