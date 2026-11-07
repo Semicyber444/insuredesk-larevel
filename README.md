@@ -91,3 +91,4 @@ php artisan test
 - ลิงก์ไฟล์เอกสารเป็น `/documents/<ไฟล์>` แทน `/api/documents/<ไฟล์>` และที่เก็บไฟล์เป็น `documents/<ไฟล์>` บนดิสก์ `local`
 - การล็อกเมื่อเข้าสู่ระบบผิดเกิน 10 ครั้งใน 15 นาที ใช้ `RateLimiter` (เก็บใน cache) แทนตาราง `login_attempts`
 - ตะกร้าเปรียบเทียบเก็บใน session ของ Laravel แทน sessionStorage ของเบราว์เซอร์
+# insuredesk-larevel
