@@ -14,4 +14,6 @@ Route::middleware(['auth', 'active'])->group(function () {
 
     Route::livewire('/search', Livewire\SearchPage::class)->name('search');
     Route::livewire('/compare', Livewire\ComparePage::class)->name('compare');
+    Route::livewire('/plans/{id}', Livewire\PlanDetailPage::class)->name('plans.show');
+    Route::get('/documents/{filename}', [DocumentController::class, 'show'])->name('documents.show');
 });
