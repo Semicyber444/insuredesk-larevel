@@ -13,4 +13,5 @@ Route::middleware(['auth', 'active'])->group(function () {
     Route::post('/demo/switch/{role}', [AuthController::class, 'switchDemoRole'])->name('demo.switch');
 
     Route::livewire('/search', Livewire\SearchPage::class)->name('search');
+    Route::livewire('/compare', Livewire\ComparePage::class)->name('compare');
 });
