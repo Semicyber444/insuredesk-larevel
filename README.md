@@ -1,58 +1,93 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# InsureDesk (Laravel)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+ระบบค้นหาและเปรียบเทียบประกันรถยนต์ภายในทีม สร้างด้วย Laravel 13, Livewire 4 และ MySQL
+แปลงมาจากโปรเจ็ค Next.js เดิม (`insuredesk`) โดยกฎธุรกิจ ข้อความ และหน้าจอเหมือนเดิม สเปกอยู่ใน `docs/SystemDesign.md` ของโปรเจ็คเดิม
 
-## About Laravel
+## เริ่มใช้งาน
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+ต้องมี PHP 8.3+ (พร้อม `intl` และ `pdo_mysql`), Composer, Node.js 22+ และ MySQL 8.0.16+
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+```bash
+npm install
+```
 
-## Contributing
+```bash
+cp .env.example .env
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan key:generate
+```
 
-## Code of Conduct
+สร้างฐานข้อมูล `insuredesk_laravel` แล้วแก้ค่า `DB_*` ใน `.env` (MAMP ใช้ `DB_SOCKET=/Applications/MAMP/tmp/mysql/mysql.sock`) จากนั้น:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan migrate --seed
+```
 
-## Security Vulnerabilities
+```bash
+npm run build
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan serve
+```
 
-## License
+เปิด <http://localhost:8000> แล้วเลือกบัญชีจำลองในหน้าเข้าสู่ระบบ (เมื่อตั้ง `ENABLE_DEMO_AUTH=true`)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+ถ้า `npm run build` แจ้ง `Cannot find native binding` ให้ติดตั้ง binding ของเครื่องเอง เช่น `npm i --no-save @rolldown/binding-darwin-x64`
+
+## คำสั่งที่ใช้บ่อย
+
+| คำสั่ง | หน้าที่ |
+|---|---|
+| `php artisan migrate` | สร้างตาราง |
+| `php artisan db:seed` | ใส่ประเภทความคุ้มครอง 16 หมวด และข้อมูลตัวอย่าง (ข้อมูลตัวอย่างไม่ลงใน production และไม่ทำงานถ้ามีแพ็กเกจอยู่แล้ว) |
+| `php artisan migrate:fresh --seed` | ลบทุกตารางแล้วสร้างใหม่พร้อมข้อมูลตัวอย่าง |
+| `php artisan insuredesk:create-user` | สร้างบัญชีผู้ใช้จริง |
+| `php artisan test` | รัน test |
+
+สร้างบัญชีผู้ดูแลระบบคนแรก (รหัสผ่านอย่างน้อย 12 ตัวอักษร):
+
+```bash
+INSUREDESK_USER_PASSWORD='change-me-please' php artisan insuredesk:create-user --email admin@example.com --name "ชื่อผู้ดูแล" --role admin
+```
+
+## การทดสอบ
+
+Test รันกับ MySQL จริงในฐานข้อมูล `insuredesk_laravel_test` (ตั้งใน `phpunit.xml`) ซึ่งถูกล้างและสร้างใหม่ทุกครั้ง ต้องสร้างฐานข้อมูลนี้ก่อน
+
+```bash
+php artisan test
+```
+
+## โครงสร้างโค้ด
+
+| ส่วน | ที่อยู่ |
+|---|---|
+| ตารางและข้อมูลตั้งต้น | `database/migrations`, `database/seeders` |
+| สิทธิ์ของแต่ละบทบาท | `config/insuredesk.php` (กลายเป็น Gate เช่น `canReview` ใน `AppServiceProvider`) |
+| การบันทึกทั้งหมด + audit log | `app/Services/InsuranceStore.php` |
+| ค้นหาและเปรียบเทียบ | `app/Services/SearchService.php` |
+| ตรวจข้อมูลฟอร์มแพ็กเกจฝั่ง server | `app/Actions/SavePlan.php` |
+| หน้าจอ | `app/Livewire`, `resources/views/livewire` |
+| เปิดไฟล์เอกสาร | `app/Http/Controllers/DocumentController.php` |
+
+## Production
+
+- ตั้ง `APP_ENV=production`, `APP_DEBUG=false` และห้ามตั้ง `ENABLE_DEMO_AUTH=true`
+- รัน `php artisan migrate --force` และ `php artisan db:seed --force` (ลงเฉพาะประเภทความคุ้มครอง) ก่อนเริ่มแอป
+- เอกสารที่อัปโหลดเก็บใน `storage/app/private/documents` ต้องใช้ดิสก์ถาวรและสำรองคู่กับฐานข้อมูล
+- `Dockerfile` สร้าง image ด้วย FrankenPHP: `docker build -t insuredesk .` แล้ว `docker run -p 8080:80 --env-file .env -v insuredesk-storage:/app/storage insuredesk`
+
+## ความต่างจากระบบเดิม
+
+- รหัสผ่านใช้ bcrypt ของ Laravel แทน scrypt บัญชีจริงจากระบบเดิมต้องสร้างใหม่ด้วย `insuredesk:create-user`
+- ไม่ได้ย้ายข้อมูลจากฐานข้อมูลเดิม (schema ใหม่ ตาราง `users` ใช้คอลัมน์ `name`/`password` แทน `display_name`/`password_hash`)
+- ลิงก์ไฟล์เอกสารเป็น `/documents/<ไฟล์>` แทน `/api/documents/<ไฟล์>` และที่เก็บไฟล์เป็น `documents/<ไฟล์>` บนดิสก์ `local`
+- การล็อกเมื่อเข้าสู่ระบบผิดเกิน 10 ครั้งใน 15 นาที ใช้ `RateLimiter` (เก็บใน cache) แทนตาราง `login_attempts`
+- ตะกร้าเปรียบเทียบเก็บใน session ของ Laravel แทน sessionStorage ของเบราว์เซอร์

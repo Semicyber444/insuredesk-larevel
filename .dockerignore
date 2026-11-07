@@ -1,0 +1,9 @@
+.env
+.git
+node_modules
+vendor
+public/build
+storage/logs/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/private/*
